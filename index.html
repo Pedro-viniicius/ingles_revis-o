@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Revisão Completa — Units 11A, 11B e 11C</title>
+  <style>
+    :root {
+      --primary: #4F46E5;
+      --secondary: #6366F1;
+      --accent: #10B981;
+      --bg: #F3F4F6;
+      --text: #1F2937;
+      --card-bg: #FFFFFF;
+      --border: #E5E7EB;
+      --danger: #EF4444;
+      --warning: #F59E0B;
+    }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 3rem 1rem;
+      text-align: center;
+    }
+    header h1 { margin: 0; font-size: 2.5rem; }
+    header p { font-size: 1.2rem; opacity: 0.9; margin-top: 1rem; }
+    .badge-accent {
+      background: var(--accent);
+      color: white;
+      padding: 0.3rem 0.8rem;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      display: inline-block;
+      margin-top: 1rem;
+    }
+    nav {
+      background: white;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      padding: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+    }
+    nav a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+    nav a:hover { background: var(--bg); }
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    section {
+      background: var(--card-bg);
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      scroll-margin-top: 80px;
+    }
+    h2 {
+      color: var(--primary);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+      margin-top: 0;
+    }
+    h3 { color: var(--secondary); margin-top: 1.5rem; }
+    .warning-box {
+      background: #FEF2F2;
+      border-left: 4px solid var(--danger);
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .warning-box strong { color: var(--danger); }
+    .highlight-box {
+      background: #EEF2FF;
+      border-left: 4px solid var(--primary);
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .practice-box {
+      background: #ECFDF5;
+      border: 1px solid var(--accent);
+      padding: 1rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+    }
+    .missing-content {
+      background: #FFFBEB;
+      border-left: 4px solid var(--warning);
+      padding: 1rem;
+      margin-bottom: 2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.75rem;
+      text-align: left;
+    }
+    th { background: var(--bg); font-weight: 600; }
+    
+    /* Flashcards */
+    .flashcard-area { text-align: center; }
+    .flashcard-controls { margin-bottom: 1.5rem; }
+    .flashcard-controls button { margin: 0.2rem; }
+    .flashcard-container {
+      perspective: 1000px;
+      width: 100%;
+      max-width: 500px;
+      height: 300px;
+      margin: 1rem auto;
+      cursor: pointer;
+    }
+    .flashcard {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+      transform-style: preserve-3d;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .flashcard.flipped { transform: rotateY(180deg); }
+    .flashcard-front, .flashcard-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      box-sizing: border-box;
+      border-radius: 12px;
+    }
+    .flashcard-front {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    .flashcard-back {
+      background-color: white;
+      color: var(--text);
+      transform: rotateY(180deg);
+      border: 2px solid var(--primary);
+    }
+    .flashcard-back p { margin: 0.5rem 0; }
+    .flashcard-back .example { font-style: italic; color: var(--secondary); font-weight: bold; }
+    
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+    button:hover { opacity: 0.9; }
+    details {
+      margin-top: 1rem;
+      background: var(--bg);
+      padding: 1rem;
+      border-radius: 8px;
+    }
+    summary {
+      cursor: pointer;
+      font-weight: bold;
+      color: var(--primary);
+    }
+    .back-to-top {
+      display: block;
+      text-align: center;
+      margin-top: 2rem;
+      color: var(--secondary);
+      text-decoration: none;
+      font-weight: bold;
+    }
+    @media (max-width: 768px) {
+      header h1 { font-size: 2rem; }
+      nav { flex-direction: column; align-items: center; }
+      table { display: block; overflow-x: auto; white-space: nowrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <header id="inicio">
+    <h1>Revisão Completa — Units 11A, 11B e 11C</h1>
+    <p>Foco em Vocabulary, Listening, Speaking e Grammar Bank para fluência e prova.</p>
+    <div class="badge-accent">Ênfase especial na Unit 11C</div>
+  </header>
+
+  <nav>
+    <a href="#visao-geral">Visão Geral</a>
+    <a href="#unit-11a">Unit 11A</a>
+    <a href="#unit-11b">Unit 11B</a>
+    <a href="#unit-11c">Unit 11C (Aprofundado)</a>
+    <a href="#vocabulary">Vocabulary</a>
+    <a href="#listening">Listening</a>
+    <a href="#speaking">Speaking</a>
+    <a href="#grammar">Grammar Bank</a>
+    <a href="#flashcards">Flashcards</a>
+    <a href="#exercicios">Exercícios</a>
+    <a href="#revisao">Revisão Final</a>
+    <a href="#plano">Plano de Estudo</a>
+  </nav>
+
+  <div class="container">
+
+    <div class="missing-content">
+      <strong>Conteúdo ausente ou não encontrado:</strong>
+      <p>Como não havia arquivos de áudio, PDFs ou anotações locais fornecidas no diretório do projeto, o conteúdo detalhado foi extraído com base no currículo oficial do <em>English File 4th Edition Elementary</em> referente às Units 11A, 11B e 11C. Textos exatos de áudio não foram inventados, mas estratégias aplicadas ao vocabulário oficial foram geradas para seu aprendizado.</p>
+    </div>
+
+    <!-- 3. OVERVIEW SECTION -->
+    <section id="visao-geral">
+      <h2>Visão Geral</h2>
+      <p>Nesta seção, você tem um mapa mental do que exatamente precisa dominar em cada unidade.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Unidade</th>
+            <th>Foco do Grammar Bank</th>
+            <th>Foco do Vocabulário</th>
+            <th>Foco de Listening/Speaking</th>
+            <th>Nível de Dificuldade</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>11A</strong></td>
+            <td>Adverbs of manner (lentamente, bem, rapidamente) e Modificadores</td>
+            <td>Adjetivos e advérbios comuns</td>
+            <td>Falar sobre como as pessoas fazem as coisas (ex: "He drives carefully")</td>
+            <td>Fácil / Médio</td>
+          </tr>
+          <tr>
+            <td><strong>11B</strong></td>
+            <td>Verbos seguidos de "to + infinitivo" (want to, need to)</td>
+            <td>Verbos de planos e intenções (decide, promise, plan)</td>
+            <td>Falar sobre o que você quer, precisa ou planeja fazer no futuro</td>
+            <td>Médio</td>
+          </tr>
+          <tr>
+            <td><strong>11C</strong></td>
+            <td>Artigo definido: usar "the" ou nenhum artigo</td>
+            <td>Smartphones, tecnologia e internet</td>
+            <td>Discutir o uso do celular e hábitos tecnológicos de forma natural</td>
+            <td>Difícil (Muitos erros brasileiros ocorrem aqui)</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 4. UNIT 11A -->
+    <section id="unit-11a">
+      <h2>Unit 11A — Adverbs & How people do things</h2>
+      <div class="highlight-box">
+        <strong>Resumo:</strong> Esta unidade ensina como descrever a *maneira* como alguém faz algo. Em português dizemos "Ele dirige mal", em inglês dizemos "He drives badly".
+      </div>
+      
+      <h3>Vocabulary & Grammar</h3>
+      <ul>
+        <li>Para transformar um adjetivo em advérbio, geralmente adicionamos <strong>-ly</strong> (equivalente ao nosso "-mente").
+          <ul>
+            <li>Slow &rarr; <em>slowly</em></li>
+            <li>Careful &rarr; <em>carefully</em></li>
+          </ul>
+        </li>
+        <li><strong>Exceções importantes:</strong>
+          <ul>
+            <li>Good &rarr; <em>well</em> (NUNCA diga "goodly")</li>
+            <li>Fast &rarr; <em>fast</em> (Permanece igual)</li>
+            <li>Hard &rarr; <em>hard</em> (Permanece igual)</li>
+          </ul>
+        </li>
+      </ul>
+
+      <div class="warning-box">
+        <strong>Erros comuns de brasileiros:</strong>
+        <p>Colocar o advérbio entre o verbo e o objeto. <br>
+        ❌ <em>I speak very well English.</em> <br>
+        ✅ <em>I speak English very well.</em> (O advérbio vai no final!)</p>
+      </div>
+
+      <h3>Quick Practice & Checklist</h3>
+      <div class="practice-box">
+        <p>Traduza mentalmente:</p>
+        <ol>
+          <li>Eles trabalham muito duro. &rarr; <em>They work very hard.</em></li>
+          <li>Ela canta lindamente. &rarr; <em>She sings beautifully.</em></li>
+        </ol>
+      </div>
+      <input type="checkbox"> Sei formar advérbios terminados em -ly.<br>
+      <input type="checkbox"> Lembro das exceções (well, fast, hard).<br>
+    </section>
+
+    <!-- 5. UNIT 11B -->
+    <section id="unit-11b">
+      <h2>Unit 11B — Verbs + to + infinitive</h2>
+      <div class="highlight-box">
+        <strong>Resumo:</strong> Quando conectamos dois verbos em inglês, o segundo frequentemente precisa vir com <strong>"to"</strong> se o primeiro verbo expressar um plano, desejo ou decisão.
+      </div>
+
+      <h3>Vocabulary & Grammar</h3>
+      <p>Os verbos principais que exigem o "to" depois deles são:</p>
+      <ul>
+        <li><strong>Want</strong> (querer) &rarr; <em>I want to go.</em></li>
+        <li><strong>Need</strong> (precisar) &rarr; <em>You need to study.</em></li>
+        <li><strong>Plan</strong> (planejar) &rarr; <em>We plan to travel.</em></li>
+        <li><strong>Decide</strong> (decidir) &rarr; <em>He decided to stay.</em></li>
+        <li><strong>Promise</strong> (prometer) &rarr; <em>I promise to help.</em></li>
+      </ul>
+
+      <div class="warning-box">
+        <strong>Erros comuns de brasileiros:</strong>
+        <p>Esquecer o "to" ou usar o verbo com "ing".<br>
+        ❌ <em>I want go.</em> / <em>I want going.</em><br>
+        ✅ <em>I want to go.</em></p>
+      </div>
+
+      <h3>Quick Practice & Checklist</h3>
+      <div class="practice-box">
+        <p>Complete a frase:</p>
+        <p>She promised _______ (call) me later. &rarr; <em>to call</em></p>
+      </div>
+      <input type="checkbox"> Sei a lista dos principais verbos que pedem "to".<br>
+      <input type="checkbox"> Não esqueço de colocar o "to" antes do segundo verbo.<br>
+    </section>
+
+    <!-- 6. UNIT 11C (EXTRA DEPTH) -->
+    <section id="unit-11c">
+      <h2>Unit 11C — Definite Article "The" & Technology 🚀 (Foco Principal)</h2>
+      <div class="highlight-box">
+        <strong>Resumo Ultra-Rápido da Unit 11C:</strong> Nós usamos o artigo <strong>"the"</strong> (o, a, os, as) apenas quando estamos falando de algo *específico* ou único. Diferente do português, NÃO usamos "the" para falar de coisas no geral, nem na frente de nomes de pessoas ou países na maioria das vezes. O vocabulário foca no uso do smartphone e internet.
+      </div>
+
+      <h3>1. Grammar Step by Step: Usando o "The"</h3>
+      <p>Em português, usamos artigo para quase tudo: "O amor é lindo", "O Brasil é grande", "A Maria chegou". Em inglês, isso é um erro gravíssimo.</p>
+
+      <h4>Quando NÃO USAR "the" (No article)</h4>
+      <ul>
+        <li><strong>Coisas no geral (Generalizações):</strong>
+          <br>❌ <em>The men are usually taller than the women.</em>
+          <br>✅ <em>Men are usually taller than women.</em> (Homens no geral)
+        </li>
+        <li><strong>Nomes de pessoas, refeições e dias da semana:</strong>
+          <br>❌ <em>The John likes the breakfast on the Sundays.</em>
+          <br>✅ <em>John likes breakfast on Sundays.</em>
+        </li>
+        <li><strong>Nomes da maioria dos países e continentes:</strong>
+          <br>❌ <em>The Brazil is in the South America.</em>
+          <br>✅ <em>Brazil is in South America.</em>
+        </li>
+      </ul>
+
+      <h4>Quando USAR "the"</h4>
+      <ul>
+        <li><strong>Quando a coisa é específica (nós sabemos de qual estamos falando):</strong>
+          <br>✅ <em>The men in this room are tall.</em> (Homens específicos desta sala)
+        </li>
+        <li><strong>Quando só existe um no mundo (Únicos):</strong>
+          <br>✅ <em>The sun, the moon, the internet.</em>
+        </li>
+        <li><strong>Países que têm palavras como "States", "Kingdom", "Republic":</strong>
+          <br>✅ <em>The United States (The US), The United Kingdom (The UK).</em>
+        </li>
+      </ul>
+
+      <div class="warning-box">
+        <strong>Como usar isso na prova/conversa:</strong>
+        <p>Antes de colocar "the" numa frase, pergunte-se: "Estou falando dessa coisa de forma genérica no universo?". Se sim, omita o "the".</p>
+      </div>
+
+      <h3>2. Vocabulary: How smart is your phone?</h3>
+      <p>Essas são as ações mais comuns para a Unit 11C. Memorize estas combinações (collocations):</p>
+      <ul>
+        <li><strong>Log in</strong> (Entrar/fazer login) &rarr; <em>Log in to your account.</em></li>
+        <li><strong>Upload</strong> (Enviar arquivo para a rede) &rarr; <em>I want to upload a photo.</em></li>
+        <li><strong>Download</strong> (Baixar arquivo) &rarr; <em>Download the attachment.</em></li>
+        <li><strong>Search</strong> (Procurar/Pesquisar) &rarr; <em>Search the web.</em></li>
+        <li><strong>Share</strong> (Compartilhar) &rarr; <em>Share this link with your friends.</em></li>
+        <li><strong>Attachment</strong> (Anexo) &rarr; <em>Please, open the attachment.</em></li>
+      </ul>
+
+      <h3>3. Speaking Models (Modelos Prontos)</h3>
+      <p>Frases prontas para praticar sozinho em casa e usar na prova oral:</p>
+      <ul>
+        <li><em>"I use my phone to send messages."</em> (Uso meu celular para enviar mensagens.)</li>
+        <li><em>"I don't often upload photos to social media."</em> (Eu não costumo enviar fotos para as redes sociais frequentemente.)</li>
+        <li><em>"Do you prefer to use the internet on your phone or laptop?"</em> (Você prefere usar a internet no celular ou no notebook?)</li>
+      </ul>
+
+      <div class="practice-box">
+        <strong>Guided Practice:</strong> <br>
+        Tente criar três frases respondendo à pergunta: <em>"What do you use your phone for?"</em><br>
+        <em>Modelo:</em> "I use my phone to [verbo em inglês]."
+      </div>
+
+      <h3>Final Mastery Checklist - 11C</h3>
+      <input type="checkbox"> Consigo explicar por que "I love the music" significa amar uma música específica e "I love music" significa amar música no geral.<br>
+      <input type="checkbox"> Sei que não vai "the" antes de "Brazil" e "English".<br>
+      <input type="checkbox"> Conheço os verbos tecnológicos (upload, download, search, share).<br>
+    </section>
+
+    <!-- 7. VOCABULARY BANK -->
+    <section id="vocabulary">
+      <h2>Vocabulary Bank Consolidado</h2>
+      <p>As palavras mais importantes das 3 unidades que você precisa reconhecer e saber falar.</p>
+      <table>
+        <tr>
+          <th>Palavra (Inglês)</th>
+          <th>Significado (Português)</th>
+          <th>Exemplo (Inglês)</th>
+          <th>Unidade / Categoria</th>
+        </tr>
+        <tr>
+          <td>Carefully</td>
+          <td>Cuidadosamente</td>
+          <td>Please, drive carefully.</td>
+          <td>11A - Adverbs</td>
+        </tr>
+        <tr>
+          <td>Fluently</td>
+          <td>Fluente(mente)</td>
+          <td>She speaks Spanish fluently.</td>
+          <td>11A - Adverbs</td>
+        </tr>
+        <tr>
+          <td>Decide</td>
+          <td>Decidir</td>
+          <td>I decided to buy a car.</td>
+          <td>11B - Verbs + to</td>
+        </tr>
+        <tr>
+          <td>Promise</td>
+          <td>Prometer</td>
+          <td>I promise not to tell.</td>
+          <td>11B - Verbs + to</td>
+        </tr>
+        <tr>
+          <td>Attachment</td>
+          <td>Anexo (de email)</td>
+          <td>Did you open the attachment?</td>
+          <td>11C - Tech</td>
+        </tr>
+        <tr>
+          <td>Upload</td>
+          <td>Enviar/Subir para a internet</td>
+          <td>I will upload the video on YouTube.</td>
+          <td>11C - Tech</td>
+        </tr>
+      </table>
+    </section>
+
+    <!-- 8. LISTENING -->
+    <section id="listening">
+      <h2>Listening Strategies</h2>
+      <p>Objetivos de escuta nas Units 11A, 11B e 11C.</p>
+      
+      <div class="highlight-box">
+        <strong>Estratégia Principal: Inferência pelo Contexto</strong><br>
+        Nos áudios da prova, você não vai entender 100% das palavras. Seu cérebro precisa focar nos <strong>substantivos, verbos principais e advérbios</strong>.
+      </div>
+      
+      <ul>
+        <li><strong>Na 11A (Adverbs):</strong> Preste atenção ao final das palavras. O som de "-ly" (/li/) é sutil. Fique atento se a pessoa descreve <em>como</em> alguém fez algo.</li>
+        <li><strong>Na 11B (Verbs+to):</strong> O "to" nas frases costuma ser pronunciado muito fraco e rápido, soando como /tə/ ou apenas /t/. Ex: "I want to go" soa como "I wanna go" ou "I wantuh go".</li>
+        <li><strong>Na 11C (Tech):</strong> Identifique palavras-chave como <em>screen, internet, post, message</em> para entender de qual aparelho ou ação a pessoa está reclamando ou elogiando.</li>
+      </ul>
+    </section>
+
+    <!-- 9. SPEAKING -->
+    <section id="speaking">
+      <h2>Speaking Practice Bank</h2>
+      <p>Pratique em voz alta. Fale estas frases no espelho para ganhar memória muscular.</p>
+      
+      <div class="practice-box">
+        <strong>Modelos prontos para falar melhor:</strong>
+        <ul>
+          <li><strong>Dar uma opinião geral (11C):</strong> <em>"In general, people use their phones too much."</em></li>
+          <li><strong>Falar de um plano futuro (11B):</strong> <em>"Next year, I hope to [travel abroad / get a new job]."</em></li>
+          <li><strong>Descrever uma habilidade (11A):</strong> <em>"I can [play the guitar / speak English] quite well."</em></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 10. GRAMMAR BANK (REVISION) -->
+    <section id="grammar">
+      <h2>Grammar Bank — Resumo Estrutural</h2>
+      <p>Tabela de fórmulas matemáticas gramaticais para você não errar a estrutura.</p>
+      
+      <h3>11A: Adverbs of Manner</h3>
+      <p><strong>Fórmula:</strong> Sujeito + Verbo + (Objeto) + Advérbio</p>
+      <ul>
+        <li>Positivo: <em>She reads the book <strong>quickly</strong>.</em></li>
+        <li>Negativo: <em>She doesn't read the book <strong>quickly</strong>.</em></li>
+      </ul>
+
+      <h3>11B: Verbs + to + Infinitive</h3>
+      <p><strong>Fórmula:</strong> Sujeito + Verbo1 + TO + Verbo2(base)</p>
+      <ul>
+        <li>Positivo: <em>They <strong>plan to visit</strong> Paris.</em></li>
+        <li>Negativo: <em>They <strong>decided not to visit</strong> Paris.</em> (Atenção: O "not" vem antes do "to"!)</li>
+        <li>Pergunta: <em>Do you <strong>want to go</strong> out?</em></li>
+      </ul>
+    </section>
+
+    <!-- 11. FLASHCARDS INTERATIVOS -->
+    <section id="flashcards">
+      <h2>Flashcards Interativos</h2>
+      <p>Estudo ativo. Leia a frente, tente lembrar da resposta, depois clique no cartão para virar.</p>
+      
+      <div class="flashcard-controls">
+        <button onclick="filterFlashcards('all')">Todos</button>
+        <button onclick="filterFlashcards('vocab')">Vocabulário</button>
+        <button onclick="filterFlashcards('grammar')">Gramática</button>
+        <button onclick="resetFlashcard()">Virar para Frente</button>
+      </div>
+
+      <div class="flashcard-area">
+        <div class="flashcard-container" id="fc-container" onclick="flipCard()">
+          <div class="flashcard" id="fc-card">
+            <div class="flashcard-front" id="fc-front">
+              <!-- Content Front -->
+              I speak English (good/well)?
+            </div>
+            <div class="flashcard-back" id="fc-back">
+              <!-- Content Back -->
+              <p><strong>Well</strong></p>
+              <p>"Good" é adjetivo, "Well" é o advérbio correto de maneira.</p>
+              <p class="example">Ex: I speak English well.</p>
+            </div>
+          </div>
+        </div>
+        <p>Cartão <span id="fc-current">1</span> de <span id="fc-total">5</span></p>
+        <button onclick="prevCard()">Anterior</button>
+        <button onclick="nextCard()">Próximo</button>
+      </div>
+    </section>
+
+    <!-- 12. EXERCISES -->
+    <section id="exercicios">
+      <h2>Exercícios de Fixação</h2>
+      <p>Teste seus conhecimentos com as questões abaixo.</p>
+
+      <div class="practice-box">
+        <strong>1. Fill in the blanks (Grammar 11A)</strong><br>
+        Traduza o adjetivo em parênteses para advérbio e complete a frase.<br>
+        a) He drives very ________ (dangerous).<br>
+        b) She did the test ________ (easy).<br>
+        c) They speak French ________ (fluent).
+      </div>
+
+      <div class="practice-box">
+        <strong>2. The or No The? (Grammar 11C)</strong><br>
+        a) I love ________ dogs. (Cachorros no geral)<br>
+        b) ________ dogs in my street are very noisy. (Cachorros específicos)<br>
+        c) She is from ________ Japan.
+      </div>
+
+      <div class="practice-box">
+        <strong>3. Verbs + to (Grammar 11B)</strong><br>
+        Escolha a opção correta:<br>
+        a) We decided (to stay / staying) home.<br>
+        b) I promise (to not / not to) be late.
+      </div>
+
+      <details>
+        <summary>Ver o Gabarito (Answer Key)</summary>
+        <p><strong>1:</strong> a) dangerously; b) easily; c) fluently.</p>
+        <p><strong>2:</strong> a) [nada/no article]; b) The; c) [nada/no article].</p>
+        <p><strong>3:</strong> a) to stay; b) not to.</p>
+      </details>
+    </section>
+
+    <!-- 13. FINAL REVIEW -->
+    <section id="revisao">
+      <h2>Revisão Final</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+        <div class="practice-box" style="margin:0;">
+          <strong>O que eu preciso saber da 11A:</strong>
+          <p>Saber que advérbios descrevem verbos e que as exceções (well, fast, hard) caem na prova.</p>
+        </div>
+        <div class="practice-box" style="margin:0;">
+          <strong>O que eu preciso saber da 11B:</strong>
+          <p>A lista de verbos de planos e decisões que precisam ser seguidos por "to + verbo".</p>
+        </div>
+        <div class="practice-box" style="margin:0;">
+          <strong>O que eu preciso saber da 11C:</strong>
+          <p>Omitir o artigo "The" quando falar sobre coisas no geral. Conhecer verbos da internet (upload, download).</p>
+        </div>
+      </div>
+      
+      <div class="warning-box">
+        <strong>Checklist de 10 minutos antes da prova:</strong>
+        <ul>
+          <li>Lembre-se: <em>I play the piano well</em> (E NÃO <em>good</em>).</li>
+          <li>Lembre-se: <em>I promise not to do it</em> (E NÃO <em>to not</em>).</li>
+          <li>Lembre-se: <em>Women talk more than men</em> (Sem "the" para generalizações).</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 14. STUDY PLAN -->
+    <section id="plano">
+      <h2>Plano de Estudo</h2>
+      <p>Siga o cronograma abaixo dependendo do seu tempo disponível.</p>
+      
+      <ul>
+        <li><strong>Plano de 1 dia (Emergência):</strong> Foque 100% na seção <a href="#revisao">Revisão Final</a> e faça os exercícios de <a href="#unit-11c">"the" (Unit 11C)</a>, pois são os que mais tiram pontos na prova.</li>
+        <li><strong>Plano de 3 dias:</strong> 
+          <ul>
+            <li><em>Dia 1:</em> Leia a teoria de 11A e 11B e pratique os Flashcards.</li>
+            <li><em>Dia 2:</em> Leia a 11C focando nos erros comuns do brasileiro e pratique as Speaking Phrases no espelho.</li>
+            <li><em>Dia 3:</em> Faça os exercícios escritos e revise o Grammar Bank.</li>
+          </ul>
+        </li>
+      </ul>
+    </section>
+
+    <a href="#inicio" class="back-to-top">&uarr; Voltar ao Topo</a>
+
+  </div>
+
+  <script>
+    // Flashcard Logic
+    const flashcardsData = [
+      { category: 'grammar', front: 'I speak English (good/well)?', back: '<strong>Well</strong><br>"Good" é adjetivo, "Well" é o advérbio correto.<br><span class="example">Ex: I speak English well.</span>' },
+      { category: 'grammar', front: '(The / No article) cats are my favorite animals.', back: '<strong>No article</strong><br>Generalização.<br><span class="example">Ex: Cats are my favorite animals.</span>' },
+      { category: 'grammar', front: 'She promised (not to tell / to not tell) my secret.', back: '<strong>not to tell</strong><br>O "not" vem antes do "to".<br><span class="example">Ex: She promised not to tell.</span>' },
+      { category: 'vocab', front: 'Qual o significado e a ação de "Upload"?', back: '<strong>Enviar arquivo para internet</strong><br><span class="example">Ex: I will upload the photo.</span>' },
+      { category: 'vocab', front: 'Como se diz "anexo" em um email?', back: '<strong>Attachment</strong><br><span class="example">Ex: Open the attachment.</span>' },
+      { category: 'grammar', front: '(The / No article) moon is beautiful tonight.', back: '<strong>The</strong><br>Existe apenas uma lua (único no mundo).<br><span class="example">Ex: The moon is beautiful.</span>' }
+    ];
+
+    let currentCards = [...flashcardsData];
+    let currentIndex = 0;
+
+    const cardEl = document.getElementById('fc-card');
+    const frontEl = document.getElementById('fc-front');
+    const backEl = document.getElementById('fc-back');
+    const currentIndicator = document.getElementById('fc-current');
+    const totalIndicator = document.getElementById('fc-total');
+
+    function loadCard() {
+      if(currentCards.length === 0) return;
+      cardEl.classList.remove('flipped');
+      frontEl.innerHTML = currentCards[currentIndex].front;
+      backEl.innerHTML = currentCards[currentIndex].back;
+      currentIndicator.innerText = currentIndex + 1;
+      totalIndicator.innerText = currentCards.length;
+    }
+
+    function flipCard() {
+      cardEl.classList.toggle('flipped');
+    }
+
+    function resetFlashcard() {
+      cardEl.classList.remove('flipped');
+    }
+
+    function nextCard() {
+      if(currentIndex < currentCards.length - 1) {
+        currentIndex++;
+        loadCard();
+      } else {
+        currentIndex = 0;
+        loadCard();
+      }
+    }
+
+    function prevCard() {
+      if(currentIndex > 0) {
+        currentIndex--;
+        loadCard();
+      } else {
+        currentIndex = currentCards.length - 1;
+        loadCard();
+      }
+    }
+
+    function filterFlashcards(category) {
+      if(category === 'all') {
+        currentCards = [...flashcardsData];
+      } else {
+        currentCards = flashcardsData.filter(c => c.category === category);
+      }
+      currentIndex = 0;
+      loadCard();
+    }
+
+    // Initialize
+    loadCard();
+  </script>
+</body>
+</html>
